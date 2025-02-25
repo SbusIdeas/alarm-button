@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alarm Button</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -15,9 +16,12 @@
             overflow: hidden;
             transition: background 0.5s;
         }
-        .alarm-button {
-            width: 150px;
-            height: 150px;
+        
+        .alarm-button, .next-button {
+            position: fixed;
+            bottom: 10px;
+            width: 75px;
+            height: 75px;
             background: red;
             border: none;
             border-radius: 50%;
@@ -28,31 +32,90 @@
             cursor: pointer;
             transition: 0.3s;
         }
+
+        .alarm-button {
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .next-button {
+            right: 10px;
+        }
+
+        .play-icon, .next-icon {
+            font-size: 50px;
+        }
         .alarm-button:active {
             transform: scale(0.95);
         }
         .siren-effect {
-            animation: siren 0.5s infinite alternate;
+            animation: softGlow 1.5s infinite alternate;
         }
-        @keyframes siren {
+        @keyframes softGlow {
             0% { background-color: black; }
-            100% { background-color: rgba(255, 0, 0, 0.3); }
+            100% { background-color: rgba(255, 0, 0, 0.2); }
         }
     </style>
 </head>
 <body>
-    <button class="alarm-button" onclick="activateAlarm()">ALARM</button>
-    <audio id="alarmSound" src="assets/sound/alarm-siren.mp3"></audio>
+    <button class="alarm-button" onclick="alarm()"><i class="material-icons play-icon">play_arrow</i></button>
+    <button class="next-button" onclick="nextAlarm()"><i class="material-icons next-icon">skip_next</i></button>
+    <audio id="alarmSound" src="assets/sound/Electronic-Notification_GEN-HD4-40621.mp3" loop></audio>
     <script>
+        let alarmInterval,
+            isPlaying = false,
+            songCount = 0,
+            songs = ["Electronic-Notification_GEN-HD4-40621.mp3", "PagerUrgentBeeping PE598201.mp3", "alarm-siren-sound-effect-type-01-294194.mp3"];
+
         function activateAlarm() {
             document.body.classList.add("siren-effect");
             let alarm = document.getElementById("alarmSound");
+            document.getElementsByClassName("play-icon")[0].innerText = "pause";
+            
+            // Reset alarm to start fresh
+            alarm.pause();
+            alarm.currentTime = 0;
             alarm.play();
-            setTimeout(() => {
-                document.body.classList.remove("siren-effect");
-                alarm.pause();
-                alarm.currentTime = 0;
-            }, 8000);
+        }
+
+        function deactivateAlarm() {
+            let alarm = document.getElementById("alarmSound");
+            document.body.classList.remove("siren-effect");
+            document.getElementsByClassName("play-icon")[0].innerText = "play_arrow";
+
+            // Reset alarm to start fresh
+            alarm.pause();
+            alarm.currentTime = 0;
+        }
+
+        function alarm() {
+            if (isPlaying) {
+                deactivateAlarm();
+                isPlaying = false;
+            } else {
+                activateAlarm();
+                isPlaying = true;
+            }
+        }
+
+        function nextAlarm() {
+            deactivateAlarm();
+            let alarm = document.getElementById("alarmSound");
+            let alarmSound = songs[findSong()];
+            console.log(alarmSound)
+            alarm.src = "assets/sound/" + alarmSound;
+            activateAlarm()
+            isPlaying = true;
+        }
+
+        function findSong() {
+            songCount++;
+
+            if (songs.length-1 < songCount) {
+                songCount = 0;
+            }
+
+            return songCount;
         }
     </script>
 </body>
