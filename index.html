@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Button</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+            transition: background 0.5s;
+        }
+        .alarm-button {
+            width: 150px;
+            height: 150px;
+            background: red;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .alarm-button:active {
+            transform: scale(0.95);
+        }
+        .siren-effect {
+            animation: siren 0.5s infinite alternate;
+        }
+        @keyframes siren {
+            0% { background-color: black; }
+            100% { background-color: rgba(255, 0, 0, 0.3); }
+        }
+    </style>
+</head>
+<body>
+    <button class="alarm-button" onclick="activateAlarm()">ALARM</button>
+    <audio id="alarmSound" src="assets/sound/alarm-siren.mp3"></audio>
+    <script>
+        function activateAlarm() {
+            document.body.classList.add("siren-effect");
+            let alarm = document.getElementById("alarmSound");
+            alarm.play();
+            setTimeout(() => {
+                document.body.classList.remove("siren-effect");
+                alarm.pause();
+                alarm.currentTime = 0;
+            }, 8000);
+        }
+    </script>
+</body>
+</html>
